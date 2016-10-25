@@ -22,6 +22,8 @@ $robot->process($data);
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+     <link rel="stylesheet" href="/css/style.css" type="text/css" />
 </head>
 <body>
     <form action="index.php" method="post" enctype="multipart/form-data" class="form-horizontal simulator">
@@ -45,7 +47,7 @@ $robot->process($data);
             <?php endif; ?>
 
             <?php if(!empty($robot->getError())): ?>
-            <div class="alert alert-error"><strong>error:</strong><?php print $robot->getError(); ?></div>
+            <div class="alert alert-danger"><strong>error:</strong> <?php print $robot->getError(); ?></div>
             <?php endif; ?>
 
             <div class="form-actions">

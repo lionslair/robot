@@ -2,13 +2,11 @@
 error_reporting(E_ALL); ini_set('display_errors', 1);
 include_once 'include/process.php';
 
-$robot = new RobotTest();
-
 $data = array('txt_command' => $_REQUEST, 'file' => $_FILES);
 
+$robot = new RobotTest();
 $robot->process($data);
-
- ?>
+?>
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
@@ -46,7 +44,7 @@ $robot->process($data);
             <div class="alert alert-info"><strong>Robot Position:</strong> <?php print $robot->getFormattedPosition(); ?></div>
             <?php endif; ?>
 
-            <?php if(!empty($robot->getError())): ?>
+            <?php if(!empty($_POST) && !empty($robot->getError())): ?>
             <div class="alert alert-danger"><strong>error:</strong> <?php print $robot->getError(); ?></div>
             <?php endif; ?>
 
@@ -56,9 +54,11 @@ $robot->process($data);
         </fieldset>
     </form>
 
-    <div>
-      <a href="https://github.com/lionslair/robot" target="_blank">https://github.com/lionslair/robot</a>
+  <div class="container-fluid">
+    <div class="row spacing-top">
+      <span>Github: </span> <a href="https://github.com/lionslair/robot" target="_blank">https://github.com/lionslair/robot</a>
     </div>
+  </div>
 
 </body>
 </html>

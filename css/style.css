@@ -6,3 +6,7 @@ body {
 form.simulator {
     width: 500px;
 }
+
+.spacing-top {
+  padding-top: 20px;
+}

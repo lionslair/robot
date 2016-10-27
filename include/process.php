@@ -31,21 +31,26 @@ class RobotTest {
       return;
     }
 
+    // We got this far so lets process the command
     $this->performOperations($this->command);
   }
 
   /**
    * Get the error message
-   * @return String Error text
+   * @return
+   *   String Error text
    */
   function getError() {
     return $this->error;
   }
 
   /**
-   * @return String      Return the commands to run else FALSE
+   * Use the submitted file else use the submitted command.
+   *
+   * @return String
+   *   Return the commands to run else FALSE
    */
- public function findCommand($data) {
+  public function findCommand($data) {
 
    if (!empty($data['file']['file']['tmp_name']) &&
        file_exists($data['file']['file']['tmp_name']) &&
@@ -58,21 +63,28 @@ class RobotTest {
    else {
      return FALSE;
    }
-
  }
 
   /**
-   * Run the commands
+   * Execute the commands
+   *
+   * @param  Array $commands Array of commands to execute
+   *
    */
   public function performOperations($commands) {
 
+    // If the parameter is still a string explode it to an array.
     if (is_string($commands)) {
       $commands = explode("\n", $commands);
     }
 
+    // Loop over each of the commands and take action on them.
     foreach ($commands AS $command) {
+
+      // Check to ensure the command is a valid one.
       if($this->isValidOperation($command)) {
 
+        // Ensure no extra space before or after the command.
         $command = trim($command);
 
         switch ($command) {
@@ -89,11 +101,11 @@ class RobotTest {
             $this->report = TRUE;
             break;
          default:
-          // We must have place
-
+          // We must have place.
+          // Remove place from the string.
           $command = substr($command,6);
 
-          // var_dump($command);
+          // Get the values for the initial position of the robot
           list($x, $y, $direction) = explode(',', $command);
 
           $this->setPosition($x,$y,$direction);
@@ -103,16 +115,21 @@ class RobotTest {
     }
  }
 
-  /**
+  /** Function to set the position of the robot.
    *
-   * Positoon and movement
+   * @param integer $x
+   *   Set the X coordinate.
+   * @param integer $y
+   *   Set the Y coordinate.
+   * @param string $direction
+   *   Direction the robot is facing
    */
-  private function setPosition($x = 0, $y = 0, $directory = 'North') {
-    $this->position = array($x, $y, $directory);
+  private function setPosition($x = 0, $y = 0, $direction = 'North') {
+    $this->position = array($x, $y, $direction);
   }
 
   /**
-   * Get the position
+   * Get the current position of the robot.
    */
   private function getPosition() {
     return $this->position;
@@ -120,20 +137,24 @@ class RobotTest {
 
   /**
    * Get Formatted Position
+   * Used on the frontend display
    */
   public function getFormattedPosition() {
     return implode(',',$this->getPosition());
   }
 
   /**
-   * Perform a turn in direction
+   * Perform a turn in direction. Eg LEFT or RIGHT
+   *
+   * @param String $direction
+   *   The direction the robot will turn. Eg LEFT or RIGHT
    */
   private function doTurn($direction) {
-    $position = $this->getPosition();
+    $position          = $this->getPosition();
 
     $current_direction = $position[2];
-    $x = $position[0];
-    $y = $position[1];
+    $x                 = $position[0];
+    $y                 = $position[1];
 
     if ($direction == 'LEFT') {
       // LEFT
@@ -171,7 +192,7 @@ class RobotTest {
   }
 
   /**
-   * Move the robot
+   * Move the robot forward.
    */
   private function doMove() {
     $position = $this->getPosition();
@@ -179,8 +200,8 @@ class RobotTest {
     if ($this->checkMoveIsValid()) {
       // print '<div class="alert alert-info">Move permitted</div>';
       $direction = $position[2];
-      $x = $position[0];
-      $y = $position[1];
+      $x         = $position[0];
+      $y         = $position[1];
 
       switch($direction) {
         case 'NORTH':
@@ -207,14 +228,11 @@ class RobotTest {
   */
 
   private function checkMoveIsValid() {
-    $position = $this->getPosition();
-
-    // print  '<pre>'.print_r($position).'</pre>';
-    // print  '<pre>'.print_r($this->table).'</pre>';
+    $position  = $this->getPosition();
 
     $direction = $position[2];
-    $x = $position[0];
-    $y = $position[1];
+    $x         = $position[0];
+    $y         = $position[1];
 
     switch($direction) {
       case 'NORTH':
@@ -230,13 +248,20 @@ class RobotTest {
         return $this->testPositionExists(($x-1), $y);
         break;
     }
-
   }
 
   /**
    * Test the position exists
+   *
+   * @param  integer $x
+   *   Test the X coordinate exists.
+   * @param  integer $y
+   *   Test the Y coordinate exists.
+   *
+   * @return Boolean
+   *   Returns TRUE or FALSE.
    */
-  private function testPositionExists($x, $y) {
+  private function testPositionExists($x = 0, $y = 0) {
 
     if (isset($this->table[$x]) &&
         isset($this->table[$y])) {
@@ -248,6 +273,12 @@ class RobotTest {
 
   /**
    * Validate the operation
+   *
+   * @param  String  $op
+   *   The command sent by the user.
+   *
+   * @return boolean
+   *    Returns TRUE or FALSE.
    */
   private function isValidOperation($op) {
     if ($this->isMove($op) ||
@@ -263,7 +294,13 @@ class RobotTest {
   }
 
   /**
-   * Validate command element
+   * Validate command element.
+   *
+   * @param String $op
+   *   Test if the command is MOVE.
+   *
+   * @return boolean
+   *   Returns TRUE or FALSE.
    */
   public function isMove($op) {
     $regex = '/^MOVE/';
@@ -272,7 +309,13 @@ class RobotTest {
   }
 
   /**
-   * Validate command element
+   * Validate command element.
+   *
+   * @param String $op
+   *   Test if the command is LEFT.
+   *
+   * @return boolean
+   *   Returns TRUE or FALSE.
    */
   public function isLeft($op) {
     $regex = '/^LEFT/';
@@ -281,7 +324,13 @@ class RobotTest {
   }
 
   /**
-   * Validate command element
+   * Validate command element.
+   *
+   * @param String $op
+   *   Test if the command is RIGHT.
+   *
+   * @return boolean
+   *   Returns TRUE or FALSE.
    */
   public function isRight($op) {
     $regex = '/^RIGHT/';
@@ -290,7 +339,13 @@ class RobotTest {
   }
 
   /**
-   * Validate command element
+   * Validate command element.
+   *
+   * @param String $op
+   *   Test if the command is PLACE x,y,DIRECTION.
+   *
+   * @return boolean
+   *   Returns TRUE or FALSE.
    */
   public function isPlace($op) {
     $regex = '/^PLACE [0-4],[0-4],(?:NORTH|EAST|SOUTH|WEST)/';
@@ -299,7 +354,13 @@ class RobotTest {
   }
 
   /**
-   * Validate command element
+   * Validate command element.
+   *
+   * @param String $op
+   *   Test if the command is REPORT.
+   *
+   * @return boolean
+   *   Returns TRUE or FALSE.
    */
   public function isReport($op) {
     $regex = '/^REPORT/';
@@ -308,16 +369,22 @@ class RobotTest {
   }
 
   /**
-   * Helper function to validate the commands
+   * Helper function to validate the commands so we do not need to duplicate code.
+   *
+   * @param  String $regex
+   *   The regex pattern.
+   * @param  String $op
+   *   The command sent by the user.
+   *
+   * @return Boolean        [description]
    */
   public function regexCommand($regex, $op) {
     $result = preg_match($regex, $op);
 
     if ($result == 1) {
-        return true;
+        return TRUE;
     } else {
-        return false;
+        return FALSE;
     }
   }
-
 }
